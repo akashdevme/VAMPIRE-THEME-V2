@@ -1,0 +1,112 @@
+<div class="lg:px-4 lg:py-6 flex flex-col gap-2">
+    <div class="flex flex-col gap-2 md:hidden">
+        @foreach (\App\Classes\Navigation::getLinks() as $nav)
+        @if (!empty($nav['children']))
+        <div x-data="{ activeAccordion: {{ $nav['active'] ? 'true' : 'false' }} }"
+            class="relative w-full mx-auto overflow-hidden text-sm font-normal divide-y divide-neutral">
+            <div class="cursor-pointer">
+                <button @click="activeAccordion = !activeAccordion"
+                    class="flex items-center justify-between w-full p-3 text-sm font-semibold whitespace-nowrap rounded-lg hover:bg-primary/5">
+                    <div class="flex flex-row gap-2">
+                        @isset($nav['icon'])
+                            <x-dynamic-component :component="$nav['icon']"
+                            class="size-5 {{ $nav['active'] ? 'text-primary' : 'fill-base/50' }}" />
+                        @endisset
+                        <span>{{ $nav['name'] }}</span>
+                    </div>
+                    <x-ri-arrow-down-s-line x-bind:class="{ 'rotate-180': activeAccordion }"
+                        class="size-4 text-base ease-out duration-300" />
+                </button>
+                <div x-show="activeAccordion" x-collapse x-cloak>
+                    <div class="p-4 pt-0 opacity-70">
+                        @foreach ($nav['children'] as $child)
+                        <div class="flex items-center space-x-2">
+                            <x-navigation.link :href="$child['url']"
+                                :spa="$child['spa'] ?? true"
+                                class="transition-colors {{ $child['active'] ? 'text-primary font-bold' : 'hover:text-primary' }}">
+                                {{ $child['name'] }}
+                            </x-navigation.link>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        @else
+        <div class="flex items-center rounded-lg border-l-2 transition-all duration-200 {{ $nav['active'] ? 'bg-primary/10 border-primary' : 'border-transparent hover:bg-primary/5 hover:border-primary/30' }}">
+            <x-navigation.link :href="$nav['url']"
+                :spa="$nav['spa'] ?? true" class="w-full">
+                @isset($nav['icon'])
+                    <x-dynamic-component :component="$nav['icon']"
+                        class="size-5 {{ $nav['active'] ? 'text-primary' : 'fill-base/50' }}" />
+                @endisset
+                {{ $nav['name'] }}
+            </x-navigation.link>
+        </div>
+        @endif
+        @isset($nav['separator'])
+        <div class="h-px w-full bg-gradient-to-r from-transparent via-gold/30 to-transparent my-1"></div>
+        @endisset
+        @endforeach
+    </div>
+
+    <div class="flex flex-col gap-2">
+        @foreach (\App\Classes\Navigation::getDashboardLinks() as $nav)
+        @if (!empty($nav['children']))
+        <div x-data="{ activeAccordion: {{ $nav['active'] ? 'true' : 'false' }} }"
+            class="relative w-full mx-auto overflow-hidden text-sm font-normal divide-y divide-neutral">
+            <div class="cursor-pointer">
+                <button @click="activeAccordion = !activeAccordion"
+                    class="flex items-center justify-between w-full p-3 text-sm font-semibold whitespace-nowrap rounded-lg hover:bg-primary/5">
+                    <div class="flex flex-row gap-2">
+                        @isset($nav['icon'])
+                            <x-dynamic-component :component="$nav['icon']"
+                                class="size-5 {{ $nav['active'] ? 'text-primary' : 'fill-base/50' }}" />
+                        @endisset
+                        <span>{{ $nav['name'] }}</span>
+                    </div>
+                    <x-ri-arrow-down-s-line x-bind:class="{ 'rotate-180': activeAccordion }"
+                        class="size-4 text-base ease-out duration-300" />
+                </button>
+                <div x-show="activeAccordion" x-collapse x-cloak>
+                    <div class="p-4 pt-0 opacity-70">
+                        @foreach ($nav['children'] as $child)
+                            @if ($child['condition'] ?? true)
+                            <div class="flex items-center space-x-2">
+                                <x-navigation.link :href="$child['url']"
+                                    :spa="$child['spa'] ?? true"
+                                    class="transition-colors {{ $child['active'] ? 'text-primary font-bold' : 'hover:text-primary' }}">
+                                    {{ $child['name'] }}
+                                </x-navigation.link>
+                            </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        @else
+        <div class="flex items-center rounded-lg border-l-2 transition-all duration-200 {{ $nav['active'] ? 'bg-primary/10 border-primary' : 'border-transparent hover:bg-primary/5 hover:border-primary/30' }}">
+            <x-navigation.link :href="$nav['url']"
+                :spa="$nav['spa'] ?? true"
+                class="w-full">
+                @isset($nav['icon'])
+                    <x-dynamic-component :component="$nav['icon']"
+                        class="size-5 {{ $nav['active'] ? 'text-primary' : 'fill-base/50' }}" />
+                @endisset
+                {{ $nav['name'] }}
+            </x-navigation.link>
+        </div>
+        @endif
+        @isset($nav['separator'])
+        <div class="h-px w-full bg-gradient-to-r from-transparent via-gold/30 to-transparent my-1"></div>
+        @endisset
+        @endforeach
+        <div class="flex flex-row items-center mt-4 justify-between md:hidden">
+            <livewire:components.locale-switch />
+
+            <x-theme-toggle />
+
+        </div>
+    </div>
+</div>
